@@ -1,0 +1,87 @@
+/* Elderly-friendly global overrides */
+
+/* Base typography - minimum 18px */
+html {
+  font-size: 18px;
+}
+
+body {
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Ensure all interactive elements have large tap targets */
+button, 
+a, 
+input, 
+select, 
+textarea,
+[role="button"] {
+  min-height: 48px;
+  font-size: 1rem;
+}
+
+input, select, textarea {
+  font-size: 1.1rem;
+  padding: 14px 16px;
+}
+
+/* Focus visibility for accessibility */
+:focus-visible {
+  outline: 3px solid #2D7D57;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Smooth but not excessive transitions */
+* {
+  transition-duration: 150ms;
+}
+
+/* Loading spinner */
+.spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+.spinner-dark {
+  border-color: rgba(0,0,0,0.15);
+  border-top-color: #2D7D57;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Coming Soon badge */
+.coming-soon-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #FEF3C7;
+  color: #92400E;
+  font-weight: 600;
+  font-size: 0.8rem;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Skeleton loading placeholder */
+.skeleton {
+  background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

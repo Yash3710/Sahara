@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Sahara</title>
+  <link rel="stylesheet" href="./css/style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-cream text-ink-900 font-sans min-h-screen flex flex-col">
+
+  <nav class="w-full px-6 py-6 flex items-center justify-between max-w-2xl mx-auto">
+    <a href="/" class="flex items-center gap-2">
+      <img src="/logo.png" alt="Sahara" class="h-8">
+    </a>
+    <a href="/" class="text-base font-medium text-primary-700 hover:text-primary-800">Back to Home</a>
+  </nav>
+
+  <main class="flex-1 flex items-center justify-center px-6 py-10">
+    <div class="w-full max-w-md bg-white rounded-3xl border border-ink-200 shadow-sm p-8 sm:p-10">
+      <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-ink-900 mb-2">Welcome back</h1>
+        <p class="text-lg text-ink-600">Please enter your details to sign in.</p>
+      </div>
+
+      <div id="error-message" class="hidden bg-secondary-50 border border-secondary-200 text-secondary-600 rounded-xl p-4 mb-6 flex items-start gap-3">
+        <i data-lucide="alert-circle" class="w-6 h-6 shrink-0 mt-0.5"></i>
+        <span id="error-text" class="text-base font-medium">Something went wrong.</span>
+      </div>
+
+      <form id="login-form" class="space-y-5">
+        <div>
+          <label class="block text-base font-semibold text-ink-600 mb-2">Email Address</label>
+          <div class="relative group">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-ink-400">
+              <i data-lucide="mail" class="w-6 h-6"></i>
+            </div>
+            <input type="email" id="identifier" placeholder="you@example.com" class="w-full pl-12 pr-5 py-4 bg-cream border-2 border-ink-200 rounded-xl text-lg focus:outline-none focus:border-primary-600 focus:bg-white transition-all shadow-sm" required>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-base font-semibold text-ink-600 mb-2">Password</label>
+          <div class="relative group">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-ink-400">
+              <i data-lucide="lock" class="w-6 h-6"></i>
+            </div>
+            <input type="password" id="password" placeholder="••••••••" class="w-full pl-12 pr-5 py-4 bg-cream border-2 border-ink-200 rounded-xl text-lg focus:outline-none focus:border-primary-600 focus:bg-white transition-all shadow-sm" required>
+          </div>
+        </div>
+
+        <button type="submit" id="submit-btn" class="w-full flex justify-center items-center gap-2 bg-primary-700 text-white px-6 py-4 rounded-xl font-bold hover:bg-primary-800 transition-all duration-200 mt-8 text-lg">
+          Sign In <i data-lucide="arrow-right" class="w-5 h-5 ml-1"></i>
+        </button>
+      </form>
+
+      <p class="text-center text-base text-ink-600 mt-8 font-medium">
+        Don't have an account? <a href="/register.html" class="font-bold text-primary-700 hover:text-primary-800 transition-colors">Sign up here</a>
+      </p>
+
+      <div class="mt-6 bg-amber-50 border border-amber-200 rounded-xl p-6 text-center">
+        <p class="text-base font-bold text-amber-800 mb-1">🔑 Try the Demo</p>
+        <p class="text-base text-amber-700">Email: <strong>demo@sahara.com</strong></p>
+        <p class="text-base text-amber-700">Password: <strong>demo123</strong></p>
+      </div>
+  </main>
+
+  <script type="module" src="./js/main.js"></script>
+  <script type="module" src="./js/auth.js"></script>
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>

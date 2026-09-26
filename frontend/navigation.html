@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Navigation Assistance - Sahara</title>
+  <script type="module" src="./js/main.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-cream text-ink-900 font-sans min-h-screen flex flex-col">
+  
+  <nav class="bg-white border-b border-ink-200 px-6 py-4 flex items-center gap-4 shrink-0">
+    <a href="/dashboard.html" class="flex items-center gap-2 text-ink-600 hover:text-ink-900 font-semibold text-base">
+      <i data-lucide="arrow-left" class="w-5 h-5"></i> Back to Home
+    </a>
+  </nav>
+
+  <main class="flex-1 max-w-lg mx-auto w-full p-6 space-y-6">
+    <div class="flex items-center gap-3">
+      <div class="p-3 bg-purple-100 text-purple-700 rounded-xl">
+        <i data-lucide="map-pin" class="w-8 h-8"></i>
+      </div>
+      <div>
+        <h1 class="text-2xl font-bold text-ink-900">Find Hospital</h1>
+        <p class="text-lg text-ink-600">Locating the nearest medical help.</p>
+      </div>
+    </div>
+
+    <div id="location-error" class="hidden bg-secondary-50 border border-secondary-200 rounded-xl p-6">
+      <p class="text-lg font-semibold text-secondary-600 mb-2">Location Required</p>
+      <p class="text-base text-secondary-600">Please allow location access so we can find the nearest hospital to you.</p>
+    </div>
+
+    <div id="map-container" class="rounded-xl overflow-hidden border border-ink-200 shadow-sm relative h-80 w-full">
+      <div id="map" class="w-full h-full z-10"></div>
+    </div>
+
+    <div class="bg-white rounded-xl border border-ink-200 p-6 shadow-sm">
+      <div class="flex items-start gap-4 mb-5">
+        <div class="w-12 h-12 rounded-xl bg-primary-50 flex items-center justify-center shrink-0">
+          <i data-lucide="alert-circle" class="text-secondary-600 w-6 h-6"></i>
+        </div>
+        <div>
+          <p class="text-sm font-semibold text-secondary-600 uppercase tracking-wide mb-1">Nearest Hospital</p>
+          <p id="nearest-hospital-name" class="text-xl font-bold text-ink-900">Locating...</p>
+        </div>
+      </div>
+      <button id="emergency-btn" class="w-full flex items-center justify-center gap-3 bg-secondary-500 text-white font-bold py-6 px-6 rounded-xl text-lg hover:bg-secondary-600 transition-all">
+        <i data-lucide="navigation" class="w-6 h-6"></i> Get Directions
+      </button>
+    </div>
+
+  </main>
+
+  <script type="module" src="./js/map.js"></script>
+  <script type="module">
+    import { requireAuth } from './js/supabaseClient.js';
+    await requireAuth();
+  </script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

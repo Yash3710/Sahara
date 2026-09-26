@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Companion - Sahara</title>
+  <script type="module" src="./js/main.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-cream text-ink-900 font-sans h-screen flex flex-col">
+  
+  <nav class="bg-white border-b border-ink-200 px-6 py-4 flex items-center justify-between shrink-0">
+    <a href="/dashboard.html" class="flex items-center gap-2 text-ink-600 hover:text-ink-900 font-semibold text-base">
+      <i data-lucide="arrow-left" class="w-5 h-5"></i> Home
+    </a>
+    <div class="flex items-center gap-2">
+      <div class="w-8 h-8 rounded-full bg-primary-600 flex items-center justify-center">
+        <i data-lucide="message-circle" class="text-white w-4 h-4"></i>
+      </div>
+      <span class="text-base font-semibold text-ink-900">Sahara</span>
+      <span class="w-2.5 h-2.5 rounded-full bg-primary-400"></span>
+    </div>
+    <div class="w-20"></div>
+  </nav>
+
+  <div id="chat-messages" class="flex-1 overflow-y-auto px-4 py-6 space-y-4 max-w-2xl mx-auto w-full">
+    <div class="flex items-start gap-3">
+      <div class="w-9 h-9 rounded-full bg-primary-600 flex items-center justify-center shrink-0">
+        <i data-lucide="message-circle" class="text-white w-4 h-4"></i>
+      </div>
+      <div class="bg-white rounded-xl rounded-tl-sm px-5 py-4 max-w-[85%] shadow-sm border border-ink-200">
+        <p class="text-base text-ink-900 leading-relaxed">Hello! I am Sahara, your companion. I am here to listen and help. How are you feeling today? 😊</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="thinking-indicator" class="hidden px-4 pb-2 max-w-2xl mx-auto w-full">
+    <div class="flex items-center gap-2 text-ink-400">
+      <span class="spinner-dark"></span>
+      <span class="text-sm font-medium">Sahara is thinking...</span>
+    </div>
+  </div>
+
+  <div id="chat-error" class="hidden px-4 pb-2 max-w-2xl mx-auto w-full">
+    <div class="bg-secondary-50 border border-secondary-200 rounded-xl px-4 py-3 flex items-center justify-between">
+      <span id="chat-error-text" class="text-base text-secondary-600">Could not send message.</span>
+      <button id="retry-btn" class="text-secondary-600 font-semibold text-sm hover:underline">Retry</button>
+    </div>
+  </div>
+
+  <div class="bg-white border-t border-ink-200 px-4 py-4 shrink-0">
+    <form id="chat-form" class="max-w-2xl mx-auto flex items-center gap-3">
+      <input type="text" id="chat-input" 
+        class="flex-1 text-lg py-4 px-5 border-2 border-ink-200 rounded-xl focus:border-primary-600 focus:ring-0 bg-white"
+        placeholder="Type your message..." 
+        autocomplete="off">
+      <button type="submit" id="send-btn" 
+        class="bg-primary-600 text-white p-4 rounded-xl hover:bg-primary-700 transition-all shrink-0" 
+        aria-label="Send message">
+        <i data-lucide="send" class="w-6 h-6"></i>
+      </button>
+    </form>
+  </div>
+
+  <script type="module" src="./js/companion.js"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>
