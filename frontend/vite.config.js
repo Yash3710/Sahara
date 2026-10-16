@@ -16,7 +16,8 @@ export default defineConfig({
         sos: resolve(__dirname, 'sos.html'),
         reminders: resolve(__dirname, 'reminders.html'),
         vault: resolve(__dirname, 'vault.html'),
-        profile: resolve(__dirname, 'profile.html')
+        profile: resolve(__dirname, 'profile.html'),
+        forgotPassword: resolve(__dirname, 'forgot-password.html')
       }
     }
   }

@@ -1,10 +1,6 @@
+/* Sahara design system — must come before @tailwind to satisfy PostCSS @import ordering */
+@import './design-system.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@layer base {
-  body {
-    background-color: #F7F6F3;
-    font-family: ui-sans-serif, system-ui, sans-serif;
-  }
-}

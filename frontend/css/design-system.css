@@ -1,0 +1,1292 @@
+/*
+ * Sahara Design System
+ * Single source of truth for tokens, shared components, and accessibility.
+ * Imported by every page. Tailwind utility classes in dashboard.html remain
+ * valid alongside this — they do not conflict.
+ */
+
+/* ─────────────────────────────────────────────
+   1. TOKENS (CSS custom properties)
+   ───────────────────────────────────────────── */
+:root {
+  /* Palette */
+  --color-bg:          #F8F7F3;
+  --color-surface:     #FFFFFF;
+  --color-border:      #E5E3DD;
+  --color-navy:        #06477D;
+  --color-navy-dark:   #054070;
+  --color-navy-faint:  #E8F1F8;
+  --color-text:        #20252B;
+  --color-text-muted:  #77766F;
+  --color-placeholder: #B0AEA7;
+
+  /* Feedback */
+  --color-error-bg:    #FFF0F0;
+  --color-error-border:#FCCACA;
+  --color-error-text:  #991B1B;
+  --color-success-bg:  #F0F7FF;
+  --color-success-border:#BAD6F5;
+  --color-success-text:#0A3D6B;
+
+  /* Emergency / SOS  (kept from existing dashboard) */
+  --color-sos:         #DC2626;
+  --color-sos-dark:    #B91C1C;
+
+  /* Typography */
+  --font-base:         ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-size-xs:      0.78rem;   /* 12.5px at 16px root */
+  --font-size-sm:      0.875rem;  /* 14px   */
+  --font-size-base:    1rem;      /* 16px   */
+  --font-size-md:      1.0625rem; /* 17px   */
+  --font-size-lg:      1.125rem;  /* 18px   */
+  --font-size-xl:      1.375rem;  /* 22px   */
+  --font-size-2xl:     1.65rem;   /* ~26px  */
+  --line-height-body:  1.65;
+  --line-height-tight: 1.2;
+
+  /* Spacing scale */
+  --space-1:  0.25rem;
+  --space-2:  0.5rem;
+  --space-3:  0.75rem;
+  --space-4:  1rem;
+  --space-5:  1.25rem;
+  --space-6:  1.5rem;
+  --space-8:  2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+
+  /* Radii */
+  --radius-sm:   0.5rem;
+  --radius-md:   0.75rem;
+  --radius-lg:   0.875rem;
+  --radius-xl:   1.25rem;
+  --radius-2xl:  1.5rem;
+  --radius-full: 9999px;
+
+  /* Shadows — kept minimal */
+  --shadow-card:   0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+  --shadow-btn:    0 2px 8px rgba(6,71,125,0.16);
+  --shadow-btn-hover: 0 4px 16px rgba(6,71,125,0.24);
+
+  /* Layout */
+  --content-width: 1080px;
+  --nav-height:    64px;
+
+  /* Transitions */
+  --transition-fast: 140ms ease;
+  --transition-base: 180ms ease;
+
+  /* Touch targets */
+  --tap-min: 44px;
+
+  /* Input */
+  --input-height: 52px;
+  --btn-height:   54px;
+}
+
+/* ─────────────────────────────────────────────
+   2. RESET & BASE
+   ───────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  /* 16px root — elderly.css nudges body font-size up, not root,
+     so rem-based spacing stays predictable */
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-base);
+  font-size: var(--font-size-lg);   /* 18px body text for elderly readability */
+  line-height: var(--line-height-body);
+  -webkit-font-smoothing: antialiased;
+  margin: 0;
+  overflow-x: hidden; /* prevent horizontal scroll on mobile */
+}
+
+/* ─────────────────────────────────────────────
+   3. ACCESSIBILITY
+   ───────────────────────────────────────────── */
+
+/* Universally visible keyboard focus ring */
+:focus-visible {
+  outline: 3px solid var(--color-navy);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+/* Remove focus ring on mouse clicks only */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Respect reduced-motion for ALL transitions and animations */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Minimum tap/click target on interactive elements */
+a, button, [role="button"], input, select, textarea {
+  min-height: var(--tap-min);
+}
+
+/* Inputs and selects should not shrink below tap target */
+input, select, textarea {
+  min-height: var(--tap-min);
+  font-size: var(--font-size-base);
+}
+
+/* ─────────────────────────────────────────────
+   4. NAVIGATION  (shared across all pages)
+   ───────────────────────────────────────────── */
+.sh-nav {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.sh-nav-inner {
+  width: 100%;
+  padding: 0 var(--space-6) 0 var(--space-4);
+  height: var(--nav-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.sh-nav-logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.sh-nav-logo img {
+  height: 52px;
+  width: auto;
+  display: block;
+}
+
+.sh-nav-links {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Ghost nav link */
+.sh-nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-text);
+  text-decoration: none;
+  padding: 0.4rem var(--space-3);
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast), color var(--transition-fast);
+  white-space: nowrap;
+  min-height: var(--tap-min);
+}
+.sh-nav-link:hover {
+  background: var(--color-navy-faint);
+  color: var(--color-navy);
+}
+
+/* Nav user info (dashboard) */
+.sh-nav-user {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+/* Logout button — inherits sh-nav-link, removes default button chrome */
+.sh-nav-logout {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+/* ─────────────────────────────────────────────
+   5. BUTTONS
+   ───────────────────────────────────────────── */
+
+/* Primary — navy filled */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  height: var(--btn-height);
+  padding: 0 var(--space-8);
+  background: var(--color-navy);
+  color: #FFFFFF;
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  text-decoration: none;
+  border: none;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: var(--shadow-btn);
+  transition: background var(--transition-base), box-shadow var(--transition-base);
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--color-navy-dark);
+  box-shadow: var(--shadow-btn-hover);
+}
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Primary — full width variant (forms) */
+.btn-primary-full {
+  width: 100%;
+}
+
+/* Secondary — outlined */
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  height: var(--btn-height);
+  padding: 0 var(--space-8);
+  background: transparent;
+  color: var(--color-navy);
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  text-decoration: none;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+.btn-secondary:hover:not(:disabled) {
+  background: var(--color-navy-faint);
+  border-color: var(--color-navy);
+}
+.btn-secondary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Small nav-sized primary (e.g. "Get Started" in nav) */
+.btn-primary-sm {
+  height: 40px;
+  padding: 0 var(--space-5);
+  font-size: var(--font-size-sm);
+  border-radius: var(--radius-md);
+}
+
+/* Danger / SOS */
+.btn-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  height: var(--btn-height);
+  padding: 0 var(--space-8);
+  background: var(--color-sos);
+  color: #FFFFFF;
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  text-decoration: none;
+  border: none;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+.btn-danger:hover:not(:disabled) {
+  background: var(--color-sos-dark);
+}
+
+/* ─────────────────────────────────────────────
+   6. FORM INPUTS
+   ───────────────────────────────────────────── */
+.form-group {
+  margin-bottom: var(--space-5);
+}
+
+.form-label {
+  display: block;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 0.4rem;
+  letter-spacing: 0.01em;
+}
+
+.input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 0.95rem;
+  color: var(--color-text-muted);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+}
+.input-icon svg { width: 18px; height: 18px; }
+
+.form-input {
+  width: 100%;
+  height: var(--input-height);
+  padding: 0 var(--space-4) 0 2.85rem;
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  outline: none;
+  min-height: unset; /* override elderly.css tap-target on inputs */
+  transition: border-color var(--transition-fast),
+              background var(--transition-fast),
+              box-shadow var(--transition-fast);
+}
+.form-input:focus {
+  border-color: var(--color-navy);
+  background: var(--color-surface);
+  box-shadow: 0 0 0 3px rgba(6,71,125,0.1);
+}
+.form-input::placeholder { color: var(--color-placeholder); }
+
+/* Input with trailing toggle (password) */
+.form-input-padded-right {
+  padding-right: 2.85rem;
+}
+
+.pwd-toggle {
+  position: absolute;
+  right: 0.85rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  padding: var(--space-1);
+  border-radius: var(--radius-sm);
+  min-height: unset;
+  transition: color var(--transition-fast);
+}
+.pwd-toggle:hover { color: var(--color-navy); }
+.pwd-toggle svg { width: 18px; height: 18px; }
+
+.field-hint {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin-top: var(--space-1);
+}
+
+/* ─────────────────────────────────────────────
+   7. ALERT BANNERS
+   ───────────────────────────────────────────── */
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.85rem var(--space-4);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-6);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  line-height: 1.55;
+}
+.alert.hidden { display: none; }
+.alert svg { flex-shrink: 0; width: 18px; height: 18px; margin-top: 2px; }
+
+.alert-error   {
+  background: var(--color-error-bg);
+  border: 1px solid var(--color-error-border);
+  color: var(--color-error-text);
+}
+.alert-success {
+  background: var(--color-success-bg);
+  border: 1px solid var(--color-success-border);
+  color: var(--color-success-text);
+}
+
+/* ─────────────────────────────────────────────
+   8. CARDS  (auth form card + dashboard content cards)
+   ───────────────────────────────────────────── */
+.sh-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-card);
+}
+
+/* Auth form card — centred on a plain background */
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+  padding: 2.75rem 2.5rem;
+}
+@media (max-width: 480px) {
+  .auth-card { padding: var(--space-8) var(--space-6); border-radius: var(--radius-xl); }
+}
+
+.auth-card-heading {
+  font-size: var(--font-size-2xl);
+  font-weight: 800;
+  color: var(--color-text);
+  letter-spacing: -0.02em;
+  margin: 0 0 0.4rem;
+}
+.auth-card-sub {
+  font-size: var(--font-size-base);
+  color: var(--color-text-muted);
+  margin: 0 0 var(--space-8);
+}
+
+/* ─────────────────────────────────────────────
+   9. PAGE LAYOUT HELPERS
+   ───────────────────────────────────────────── */
+.sh-page-wrap {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.sh-content {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: 0 var(--space-6);
+  width: 100%;
+}
+
+/* Centred auth layout */
+.auth-layout {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-12) var(--space-5);
+}
+
+/* ─────────────────────────────────────────────
+   10. SPINNER
+   ───────────────────────────────────────────── */
+.spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid rgba(255,255,255,0.35);
+  border-top-color: #FFFFFF;
+  border-radius: 50%;
+  flex-shrink: 0;
+  animation: sh-spin 0.65s linear infinite;
+}
+.spinner-dark {
+  border-color: rgba(6,71,125,0.2);
+  border-top-color: var(--color-navy);
+}
+@keyframes sh-spin { to { transform: rotate(360deg); } }
+
+/* ─────────────────────────────────────────────
+   11. UTILITY HELPERS
+   ───────────────────────────────────────────── */
+.text-link {
+  color: var(--color-navy);
+  font-weight: 700;
+  text-decoration: none;
+}
+.text-link:hover { text-decoration: underline; }
+
+.text-muted { color: var(--color-text-muted); }
+
+.section-divider {
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: 0;
+}
+
+/* Switch-page link below auth forms */
+.switch-link {
+  text-align: center;
+  margin-top: var(--space-6);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+/* Demo hint box */
+.demo-hint {
+  background: #FFFBEB;
+  border: 1px solid #FDE68A;
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) 1.1rem;
+  margin-top: var(--space-6);
+  text-align: center;
+}
+.demo-hint p { font-size: var(--font-size-sm); color: #78350F; line-height: 1.55; margin: 0; }
+.demo-hint strong { font-weight: 700; }
+
+/* Forgot / back links */
+.form-footer-link {
+  display: block;
+  text-align: right;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-navy);
+  text-decoration: none;
+  margin-top: var(--space-1);
+}
+.form-footer-link:hover { text-decoration: underline; }
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  margin-bottom: var(--space-6);
+  transition: color var(--transition-fast);
+}
+.back-link:hover { color: var(--color-navy); }
+.back-link svg { width: 15px; height: 15px; }
+
+/* ─────────────────────────────────────────────
+   12. DASHBOARD-SPECIFIC  (augments Tailwind)
+   ───────────────────────────────────────────── */
+
+/* Override the dashboard nav to use the shared nav tokens */
+.dash-nav {
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+.dash-nav-inner {
+  width: 100%;
+  padding: 0 var(--space-6) 0 var(--space-4);
+  height: var(--nav-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+/* SOS floating button — keep existing look, just align sizing tokens */
+.sos-fab {
+  position: fixed;
+  bottom: var(--space-6);
+  right: var(--space-6);
+  z-index: 50;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: var(--btn-height);
+  padding: 0 var(--space-6);
+  background: var(--color-sos);
+  color: #FFFFFF;
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 20px rgba(220,38,38,0.3);
+  text-decoration: none;
+  transition: background var(--transition-fast), box-shadow var(--transition-fast);
+  cursor: pointer;
+  border: none;
+}
+.sos-fab:hover { background: var(--color-sos-dark); }
+
+/* Skeleton shimmer — keep from elderly.css but define here canonically */
+.skeleton {
+  background: linear-gradient(90deg, #E5E3DD 25%, #F0EFEC 50%, #E5E3DD 75%);
+  background-size: 200% 100%;
+  border-radius: var(--radius-md);
+  animation: sh-shimmer 1.4s ease infinite;
+}
+@keyframes sh-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ─────────────────────────────────────────────
+   13. FOOTER
+   ───────────────────────────────────────────── */
+.sh-footer {
+  border-top: 1px solid var(--color-border);
+  background: var(--color-bg);
+}
+.sh-footer-inner {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: var(--space-6);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+.sh-footer p, .sh-footer a {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  text-decoration: none;
+  margin: 0;
+  min-height: unset; /* footer links don't need 44px tap target */
+}
+.sh-footer a:hover { color: var(--color-navy); }
+.sh-footer-links { display: flex; gap: var(--space-5); }
+
+/* ─────────────────────────────────────────────
+   15. APP NAV  (dashboard + authenticated pages)
+   ───────────────────────────────────────────── */
+
+/* Outer bar */
+.app-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.app-nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  padding: 0 1.5rem 0 0.75rem;
+  gap: 1rem;
+}
+
+/* Logo */
+.app-nav-logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.app-nav-logo img {
+  height: 52px;
+  width: auto;
+  display: block;
+}
+
+/* Centre nav links */
+.app-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex: 1;
+  justify-content: flex-end;
+  padding-right: 1rem;
+}
+
+/* Individual nav item */
+.app-nav-item {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 0.625rem;
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  font-family: var(--font-base);
+  transition: background var(--transition-fast), color var(--transition-fast);
+  min-height: unset;
+  white-space: nowrap;
+}
+.app-nav-item:hover {
+  background: var(--color-navy-faint);
+  color: var(--color-navy);
+}
+.app-nav-item--active {
+  color: var(--color-navy);
+  background: var(--color-navy-faint);
+  font-weight: 700;
+}
+.app-nav-item-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+.app-nav-item-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+/* SOS item — always red */
+.app-nav-item--sos {
+  color: #DC2626;
+}
+.app-nav-item--sos:hover {
+  background: #FEE2E2;
+  color: #B91C1C;
+}
+.app-nav-item--sos.app-nav-item--active {
+  background: #FEE2E2;
+  color: #B91C1C;
+}
+
+/* Right section */
+.app-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+/* Profile button */
+.app-nav-profile-wrap {
+  position: relative;
+}
+.app-nav-profile-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.65rem 0.35rem 0.35rem;
+  border-radius: 0.625rem;
+  background: none;
+  border: 1.5px solid var(--color-border);
+  cursor: pointer;
+  font-family: var(--font-base);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-text);
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+  min-height: unset;
+}
+.app-nav-profile-btn:hover {
+  background: var(--color-navy-faint);
+  border-color: var(--color-navy);
+}
+
+/* Avatar circle */
+.app-nav-avatar,
+.app-nav-dropdown-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--color-navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.app-nav-avatar-initials {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  letter-spacing: 0.03em;
+  line-height: 1;
+}
+.app-nav-profile-label {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.app-nav-chevron {
+  width: 14px;
+  height: 14px;
+  color: var(--color-text-muted);
+  transition: transform var(--transition-fast);
+}
+.app-nav-profile-btn[aria-expanded="true"] .app-nav-chevron {
+  transform: rotate(180deg);
+}
+
+/* Dropdown panel */
+.app-nav-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  width: 260px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 0.875rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  z-index: 100;
+  overflow: hidden;
+}
+.app-nav-dropdown--open {
+  display: block;
+}
+
+.app-nav-dropdown-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: var(--color-bg);
+}
+.app-nav-dropdown-avatar {
+  width: 40px;
+  height: 40px;
+}
+.app-nav-dropdown-info { overflow: hidden; }
+.app-nav-dropdown-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.app-nav-dropdown-email {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.app-nav-dropdown-divider {
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: 0;
+}
+
+.app-nav-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--color-text);
+  text-decoration: none;
+  background: none;
+  border: none;
+  width: 100%;
+  cursor: pointer;
+  font-family: var(--font-base);
+  transition: background var(--transition-fast);
+  min-height: unset;
+}
+.app-nav-dropdown-item svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+}
+.app-nav-dropdown-item:hover { background: var(--color-bg); }
+.app-nav-dropdown-logout { color: #DC2626; }
+.app-nav-dropdown-logout svg { color: #DC2626; }
+.app-nav-dropdown-logout:hover { background: #FEF2F2; }
+
+/* Hamburger button (mobile only) */
+.app-nav-hamburger {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: none;
+  border: 1.5px solid var(--color-border);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  color: var(--color-text);
+  flex-shrink: 0;
+  min-height: unset;
+}
+.app-nav-hamburger svg { width: 20px; height: 20px; }
+
+/* Mobile drawer */
+.app-nav-drawer {
+  display: none;
+  flex-direction: column;
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  padding: 0.5rem 0.75rem 1rem;
+  gap: 0.25rem;
+}
+.app-nav-drawer--open {
+  display: flex;
+}
+.app-nav-drawer .app-nav-item {
+  flex-direction: row;
+  justify-content: flex-start;
+  padding: 0.7rem 0.75rem;
+  font-size: 0.95rem;
+  gap: 0.75rem;
+  border-radius: 0.5rem;
+  width: 100%;
+}
+.app-nav-drawer .app-nav-item-label { font-size: 0.95rem; }
+.app-nav-drawer .app-nav-item-icon  { width: 18px; height: 18px; }
+.app-nav-drawer-divider {
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: 0.25rem 0;
+}
+.app-nav-drawer-logout {
+  text-align: left;
+  color: #DC2626;
+  background: none;
+  border: none;
+  font-family: var(--font-base);
+  cursor: pointer;
+}
+
+/* Responsive: hide centre links and show hamburger on small screens */
+@media (max-width: 860px) {
+  .app-nav-links { display: none; }
+  .app-nav-hamburger { display: inline-flex; }
+  .app-nav-profile-label { display: none; }
+  .app-nav-chevron { display: none; }
+}
+
+/* ─────────────────────────────────────────────
+   16. DASHBOARD EXTRAS
+   ───────────────────────────────────────────── */
+
+/* ── Shared section header ── */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.85rem;
+}
+.section-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0;
+}
+.section-title svg {
+  width: 16px; height: 16px;
+  color: var(--color-navy); stroke: var(--color-navy);
+  flex-shrink: 0;
+}
+
+/* ── Bottom pair grid — stretch so cards match height ── */
+.dash-bottom-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  align-items: stretch;  /* equal card heights */
+}
+@media (max-width: 640px) {
+  .dash-bottom-grid { grid-template-columns: 1fr; }
+}
+
+/* Cards inside the bottom grid fill their cell */
+.dash-bottom-grid > .d-card {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Daily Routine ── */
+.routine-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.routine-item {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.6rem 0.7rem;
+  border-radius: 0.625rem;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  transition: background var(--transition-fast);
+}
+.routine-item--done { opacity: 0.48; }
+.routine-item--done .routine-item-label { text-decoration: line-through; }
+
+/* Checkbox circle */
+.routine-check {
+  width: 26px; height: 26px; flex-shrink: 0;
+  border-radius: 50%;
+  border: 2px solid var(--color-border);
+  background: var(--color-surface);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: border-color var(--transition-fast), background var(--transition-fast);
+  min-height: unset; padding: 0;
+}
+.routine-check:hover:not(:disabled) { border-color: var(--color-navy); }
+.routine-check--checked { border-color: var(--color-navy); background: var(--color-navy); }
+.routine-check:disabled { cursor: default; }
+.routine-check-icon { width: 13px; height: 13px; color: var(--color-border); stroke: var(--color-border); }
+.routine-check--checked .routine-check-icon { color: #fff; stroke: #fff; }
+
+/* Type icon pill */
+.routine-item-icon {
+  width: 30px; height: 30px; border-radius: 0.4rem;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.routine-item-icon svg { width: 14px; height: 14px; }
+.routine-icon-medicine     { background: #EFF6FF; }
+.routine-icon-medicine svg { color: #3B82F6; stroke: #3B82F6; }
+.routine-icon-reminder     { background: #FFFBEB; }
+.routine-icon-reminder svg { color: #D97706; stroke: #D97706; }
+.routine-icon-appointment  { background: #F0FDF4; }
+.routine-icon-appointment svg { color: #16A34A; stroke: #16A34A; }
+
+.routine-item-body { flex: 1; min-width: 0; }
+.routine-item-label {
+  display: block;
+  font-size: 0.86rem; font-weight: 600; color: var(--color-text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  line-height: 1.3;
+}
+.routine-item-time {
+  display: block;
+  font-size: 0.72rem; color: var(--color-text-muted); margin-top: 0.1rem;
+}
+
+.routine-item-badge {
+  font-size: 0.62rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.04em; padding: 0.12rem 0.4rem; border-radius: 9999px;
+  flex-shrink: 0;
+}
+.routine-badge-medicine    { background: #EFF6FF; color: #3B82F6; }
+.routine-badge-reminder    { background: #FFFBEB; color: #D97706; }
+.routine-badge-appointment { background: #F0FDF4; color: #16A34A; }
+
+/* Empty state — compact, no excessive height */
+.routine-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 1.25rem 1rem;   /* was 2rem — now tighter */
+  text-align: center;
+}
+.routine-empty svg { width: 28px; height: 28px; color: var(--color-border); stroke: var(--color-border); }
+.routine-empty p { font-size: 0.86rem; color: var(--color-text-muted); margin: 0; }
+.routine-empty-link {
+  font-size: 0.82rem; font-weight: 600; color: var(--color-navy);
+  text-decoration: none;
+}
+.routine-empty-link:hover { text-decoration: underline; }
+
+/* ── Mood Check-in ── */
+.mood-question {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  margin: 0 0 0.75rem;
+  line-height: 1.4;
+}
+
+.mood-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+/* Each button is the same height — use a fixed height so grid rows align */
+.mood-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  height: 76px;            /* fixed → equal heights in both rows */
+  padding: 0 0.5rem;
+  background: var(--color-bg);
+  border: 1.5px solid var(--color-border);
+  border-radius: 0.75rem;
+  cursor: pointer;
+  font-family: var(--font-base);
+  transition: border-color var(--transition-fast), background var(--transition-fast),
+              box-shadow var(--transition-fast);
+  min-height: unset;
+  width: 100%;
+}
+.mood-btn:hover {
+  border-color: var(--color-navy);
+  background: var(--color-navy-faint);
+  box-shadow: 0 2px 8px rgba(6,71,125,0.08);
+}
+.mood-btn:focus-visible {
+  outline: 3px solid var(--color-navy);
+  outline-offset: 2px;
+}
+.mood-emoji { font-size: 1.6rem; line-height: 1; }
+.mood-label { font-size: 0.74rem; font-weight: 600; color: var(--color-text); line-height: 1.2; }
+
+/* Response state */
+.mood-response {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.8rem;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+.mood-response-emoji { font-size: 1.6rem; line-height: 1; flex-shrink: 0; margin-top: 0.1rem; }
+.mood-response-text  { min-width: 0; }
+.mood-response-feeling {
+  font-size: 0.84rem; font-weight: 600; color: var(--color-text);
+  margin: 0 0 0.25rem;
+}
+.mood-response-message {
+  font-size: 0.82rem; color: var(--color-text-muted); margin: 0; line-height: 1.55;
+}
+
+.mood-change-btn {
+  font-size: 0.78rem; font-weight: 600; color: var(--color-navy);
+  background: none; border: none; cursor: pointer; padding: 0;
+  text-decoration: underline; font-family: var(--font-base); min-height: unset;
+}
+
+/* ── A Little Positivity ── */
+
+/* The card itself stretches to match mood card via dash-bottom-grid stretch */
+.positivity-body {
+  flex: 1;                  /* fill remaining card height */
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  background: var(--color-navy-faint);
+  border-radius: 0.625rem;
+  padding: 1.1rem;
+  justify-content: space-between;
+}
+
+.positivity-icon-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+.positivity-icon {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: #FFFFFF;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  box-shadow: 0 1px 4px rgba(6,71,125,0.1);
+}
+.positivity-icon svg { width: 17px; height: 17px; color: var(--color-navy); stroke: var(--color-navy); }
+.positivity-tagline {
+  font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.07em; color: var(--color-navy); opacity: 0.7;
+}
+
+#positivity-message {
+  font-size: 0.92rem;
+  color: var(--color-navy);
+  line-height: 1.65;
+  font-style: italic;
+  margin: 0;
+}
+
+/* ─────────────────────────────────────────────
+   17. PAGE TRANSITIONS
+   ───────────────────────────────────────────── */
+
+/*
+ * Fade-in the MAIN CONTENT only — not the nav.
+ * Applying the animation to body makes the sticky nav slide/flicker.
+ * Instead we target main, .dash-main, and common page wrappers.
+ */
+@keyframes sh-page-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+main,
+.dash-main,
+.bottom-scroll,
+.page-head,
+#chat-messages,
+.chat-input-bar {
+  animation: sh-page-in 160ms ease-out both;
+}
+
+/* Nav must never animate — it should feel permanently fixed */
+#app-nav,
+.app-nav {
+  animation: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  main, .dash-main, .bottom-scroll, .page-head,
+  #chat-messages, .chat-input-bar {
+    animation: none;
+  }
+}
+
+/* Native View Transitions API (Chrome 126+) */
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root) {
+  animation: 110ms ease-in both sh-vt-out;
+}
+::view-transition-new(root) {
+  animation: 150ms ease-out both sh-vt-in;
+}
+
+@keyframes sh-vt-out { to   { opacity: 0; } }
+@keyframes sh-vt-in  { from { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) { animation: none; }
+}
+
+/* ─────────────────────────────────────────────
+   18. SHARED PAGE HEADING BAR
+   (used on authenticated pages that have a
+    page-specific title below the app nav)
+   ───────────────────────────────────────────── */
+.page-head {
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+.page-head-inner {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: 0.8rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.page-head-icon {
+  width: 34px; height: 34px;
+  border-radius: 0.5rem;
+  background: var(--color-navy-faint);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.page-head-icon svg { width: 16px; height: 16px; color: var(--color-navy); stroke: var(--color-navy); }
+.page-head-title { font-size: 1rem; font-weight: 800; color: var(--color-text); margin: 0; line-height: 1.2; }
+.page-head-sub   { font-size: 0.73rem; color: var(--color-text-muted); margin: 0; }

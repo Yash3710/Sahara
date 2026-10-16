@@ -3,41 +3,187 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sahara - Elderly Companion Platform</title>
+  <title>Sahara – Your Everyday Companion</title>
   <script type="module" src="./js/main.js"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
-</head>
-<body class="bg-cream text-ink-900 font-sans">
-  
-  <nav class="w-full px-6 py-6 flex items-center justify-between max-w-6xl mx-auto">
-    <div class="flex items-center gap-2">
-      <img src="/logo.png" alt="Sahara Logo" class="h-8">
-      
-    </div>
-    <div class="flex items-center gap-4">
-      <a href="/login.html" class="text-sm font-medium text-ink-600 hover:text-ink-900">Log in</a>
-      <a href="/register.html" class="bg-primary-700 text-white text-sm font-medium px-5 py-2.5 rounded-xl hover:bg-primary-800 transition-all">Get Started</a>
-    </div>
-  </nav>
+  <style>
+    /* Homepage-only styles — layout and content not shared elsewhere */
 
-  <main class="max-w-6xl mx-auto px-6 py-20 text-center">
-    <div class="inline-flex items-center gap-2 bg-primary-100 text-primary-700 px-4 py-1.5 rounded-xl text-xs font-bold uppercase tracking-wider mb-8">
-      <i data-lucide="heart" class="w-4 h-4"></i> Caring for our elders
-    </div>
-    <h1 class="text-5xl md:text-6xl font-extrabold text-ink-900 leading-tight mb-6">
-      Never feel <span class="text-primary-700">alone</span> again.
-    </h1>
-    <p class="text-xl text-ink-400 max-w-2xl mx-auto mb-10">
-      Sahara is an AI-powered companion designed to listen, assist, and care. 
-      From medication reminders to a friendly chat, we are here for you.
-    </p>
-    
-    <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-      <a href="/register.html" class="w-full sm:w-auto bg-primary-700 text-white font-bold text-lg px-8 py-4 rounded-xl hover:bg-primary-800 transition-all shadow-card flex items-center justify-center gap-2">
-        Meet Your Companion <i data-lucide="arrow-right"></i>
+    .hero-heading {
+      font-size: clamp(2.2rem, 5.5vw, 3.75rem);
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      font-weight: 800;
+      color: var(--color-text);
+    }
+    .hero-heading .highlight { color: var(--color-navy); }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--color-navy-faint);
+      color: var(--color-navy);
+      font-weight: 700;
+      font-size: var(--font-size-xs);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.35rem 1rem;
+      border-radius: var(--radius-full);
+      margin-bottom: var(--space-8);
+    }
+    .eyebrow svg { width: 13px; height: 13px; }
+
+    .hero-section {
+      max-width: var(--content-width);
+      margin: 0 auto;
+      padding: 5rem var(--space-6) 4.5rem;
+      text-align: center;
+    }
+
+    .hero-desc {
+      font-size: 1.1rem;
+      color: var(--color-text-muted);
+      max-width: 540px;
+      margin: var(--space-6) auto var(--space-10);
+      line-height: var(--line-height-body);
+    }
+
+    /* Features grid */
+    .features-section {
+      max-width: var(--content-width);
+      margin: 0 auto;
+      padding: 4rem var(--space-6) 5rem;
+    }
+    .features-label {
+      text-align: center;
+      font-size: var(--font-size-xs);
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-10);
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-5);
+    }
+    @media (max-width: 860px) {
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 540px) {
+      .features-grid { grid-template-columns: 1fr; }
+      .hero-section { padding-top: 3rem; padding-bottom: 3rem; }
+    }
+
+    .feature-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      padding: var(--space-8) 1.75rem;
+      transition: box-shadow var(--transition-base);
+    }
+    .feature-card:hover {
+      box-shadow: 0 4px 20px rgba(6,71,125,0.07);
+    }
+    .feature-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: var(--radius-lg);
+      background: var(--color-navy-faint);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: var(--space-5);
+    }
+    .feature-icon svg { width: 20px; height: 20px; color: var(--color-navy); stroke: var(--color-navy); }
+    .feature-title {
+      font-size: var(--font-size-base);
+      font-weight: 700;
+      color: var(--color-text);
+      margin: 0 0 var(--space-2);
+    }
+    .feature-desc {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-muted);
+      line-height: var(--line-height-body);
+      margin: 0;
+    }
+  </style>
+</head>
+<body class="sh-page-wrap">
+
+  <!-- Navigation -->
+  <header class="sh-nav">
+    <div class="sh-nav-inner">
+      <a href="/" class="sh-nav-logo" aria-label="Sahara home">
+        <img src="/logo.png" alt="Sahara">
       </a>
+      <nav class="sh-nav-links">
+        <a href="/login.html" class="sh-nav-link">Log in</a>
+        <a href="/register.html" class="btn-primary btn-primary-sm">Get Started</a>
+      </nav>
     </div>
+  </header>
+
+  <!-- Hero -->
+  <main>
+    <section class="hero-section">
+      <p class="eyebrow">
+        <i data-lucide="heart"></i>
+        Caring for our elders
+      </p>
+      <h1 class="hero-heading">
+        Never feel <span class="highlight">alone</span> again.
+      </h1>
+      <p class="hero-desc">
+        Sahara is your companion for everyday life. From medication reminders to friendly conversations, we're here to help.
+      </p>
+      <a href="/register.html" class="btn-primary">
+        Meet Your Companion
+        <i data-lucide="arrow-right" style="width:18px;height:18px;"></i>
+      </a>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- Features -->
+    <section class="features-section" aria-label="Features">
+      <p class="features-label">Everything you need, in one place</p>
+      <div class="features-grid">
+
+        <div class="feature-card">
+          <div class="feature-icon"><i data-lucide="bell"></i></div>
+          <h2 class="feature-title">Daily Reminders</h2>
+          <p class="feature-desc">Never miss a medication or appointment. Sahara keeps you on track with gentle, timely reminders.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon"><i data-lucide="message-circle"></i></div>
+          <h2 class="feature-title">Friendly Conversations</h2>
+          <p class="feature-desc">A kind companion ready to listen whenever you want to talk, share a story, or just say hello.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon"><i data-lucide="shield-check"></i></div>
+          <h2 class="feature-title">Help When You Need It</h2>
+          <p class="feature-desc">One-tap emergency SOS, nearby hospital finder, and a safe vault for your important documents.</p>
+        </div>
+
+      </div>
+    </section>
   </main>
+
+  <!-- Footer -->
+  <footer class="sh-footer">
+    <div class="sh-footer-inner">
+      <p>© 2026 Sahara. Made with care.</p>
+      <nav class="sh-footer-links">
+        <a href="#">About Us</a>
+      </nav>
+    </div>
+  </footer>
 
   <script>lucide.createIcons();</script>
   <script type="module">
@@ -45,5 +191,6 @@
     const { data: { session } } = await supabase.auth.getSession();
     if (session) window.location.href = '/dashboard.html';
   </script>
+
 </body>
 </html>

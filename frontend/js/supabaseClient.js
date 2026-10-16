@@ -70,12 +70,24 @@ export async function getCurrentUser() {
 
 // Check if user is authenticated, redirect to login if not
 export async function requireAuth() {
+  // First try getSession (fast, uses localStorage)
   const { data: { session } } = await supabase.auth.getSession();
-  if (!session) {
-    window.location.href = '/login.html';
-    return null;
+  console.log('[requireAuth] getSession result:', session);
+  if (session) return session;
+
+  // Fallback: getUser hits the network but is authoritative
+  const { data: { user }, error } = await supabase.auth.getUser();
+  console.log('[requireAuth] getUser result:', { user, error });
+  if (user && !error) {
+    // Re-fetch session now that user is confirmed
+    const { data: { session: retried } } = await supabase.auth.getSession();
+    console.log('[requireAuth] retried getSession:', retried);
+    if (retried) return retried;
   }
-  return session;
+
+  console.warn('[requireAuth] no session found, redirecting to login');
+  window.location.href = '/login.html';
+  return null;
 }
 
 // Logout and redirect

@@ -3,61 +3,384 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Navigation Assistance - Sahara</title>
+  <title>Find Hospital – Sahara</title>
+  <link rel="stylesheet" href="./css/style.css">
   <script type="module" src="./js/main.js"></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/lucide@latest"></script>
-</head>
-<body class="bg-cream text-ink-900 font-sans min-h-screen flex flex-col">
-  
-  <nav class="bg-white border-b border-ink-200 px-6 py-4 flex items-center gap-4 shrink-0">
-    <a href="/dashboard.html" class="flex items-center gap-2 text-ink-600 hover:text-ink-900 font-semibold text-base">
-      <i data-lucide="arrow-left" class="w-5 h-5"></i> Back to Home
-    </a>
-  </nav>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  <main class="flex-1 max-w-lg mx-auto w-full p-6 space-y-6">
-    <div class="flex items-center gap-3">
-      <div class="p-3 bg-purple-100 text-purple-700 rounded-xl">
-        <i data-lucide="map-pin" class="w-8 h-8"></i>
+    html, body {
+      height: 100%;
+      font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+      background: #F8F7F3;
+      color: #20252B;
+    }
+
+    .page {
+      display: flex;
+      flex-direction: column;
+      height: 100dvh;
+      overflow: hidden;
+    }
+
+    /* ── Top bar ── */
+    .top-bar {
+      background: #FFFFFF;
+      border-bottom: 1px solid #E5E3DD;
+      padding: 0 1.25rem;
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      z-index: 600;
+    }
+    .back-link {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-size: 0.88rem; font-weight: 600; color: #77766F;
+      text-decoration: none; padding: 0.4rem 0.65rem;
+      border-radius: 0.5rem; transition: background 140ms, color 140ms;
+      min-height: 44px;
+    }
+    .back-link:hover  { background: #F8F7F3; color: #20252B; }
+    .back-link svg    { width: 15px; height: 15px; }
+
+    .top-bar-title {
+      display: flex; align-items: center; gap: 0.5rem;
+      font-size: 0.95rem; font-weight: 700; color: #20252B;
+    }
+    .top-bar-title svg { width: 16px; height: 16px; color: #06477D; stroke: #06477D; }
+    .top-bar-spacer { width: 80px; }
+
+    /* ── Map — fixed height ~55 vh ── */
+    #map {
+      height: 52vh;
+      min-height: 240px;
+      width: 100%;
+      flex-shrink: 0;
+      z-index: 1;
+    }
+
+    /* ── Scrollable bottom area ── */
+    .bottom-scroll {
+      flex: 1;
+      overflow-y: auto;
+      background: #F8F7F3;
+    }
+    .bottom-scroll::-webkit-scrollbar { width: 4px; }
+    .bottom-scroll::-webkit-scrollbar-thumb { background: #E5E3DD; border-radius: 9999px; }
+
+    .bottom-inner {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 1rem 1rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    /* ── Location error ── */
+    #location-error {
+      display: flex; align-items: center; gap: 0.6rem;
+      padding: 0.85rem 1rem;
+      background: #FFF0F0; border: 1px solid #FCCACA;
+      border-radius: 0.75rem;
+      font-size: 0.85rem; font-weight: 500; color: #991B1B;
+    }
+    #location-error.hidden { display: none; }
+    #location-error svg { width: 16px; height: 16px; flex-shrink: 0; color: #991B1B; stroke: #991B1B; }
+
+    /* ── Status bar ── */
+    .status-bar {
+      display: flex; align-items: center; gap: 0.55rem;
+      font-size: 0.8rem; font-weight: 600; color: #77766F;
+      padding: 0 0.25rem;
+    }
+    .status-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #E5E3DD; flex-shrink: 0;
+    }
+    .status-dot.locating { background: #F59E0B; animation: pulse-dot 1.2s infinite; }
+    .status-dot.found    { background: #22C55E; }
+    .status-dot.error    { background: #EF4444; }
+    @keyframes pulse-dot { 0%,100%{opacity:1}50%{opacity:0.3} }
+    @media (prefers-reduced-motion: reduce) { .status-dot { animation: none; } }
+
+    /* ── Route info card ── */
+    #route-card {
+      background: #FFFFFF;
+      border: 1px solid #E5E3DD;
+      border-radius: 0.875rem;
+      overflow: hidden;
+    }
+    #route-card.hidden { display: none; }
+
+    .route-header {
+      padding: 0.85rem 1.1rem 0.5rem;
+      display: flex; align-items: center; gap: 0.55rem;
+      border-bottom: 1px solid #F5F4F1;
+    }
+    .route-header-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: #DC2626; flex-shrink: 0;
+    }
+    .route-label {
+      font-size: 0.65rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.09em; color: #9E9A91;
+    }
+    #route-hospital-name {
+      font-size: 0.92rem; font-weight: 700; color: #20252B;
+      padding: 0 1.1rem 0.75rem;
+      margin-top: 0.4rem;
+    }
+
+    /* Stats row */
+    .route-stats {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      border-top: 1px solid #F5F4F1;
+    }
+    .route-stat {
+      display: flex; flex-direction: column; align-items: center;
+      padding: 0.85rem 0.5rem;
+      border-right: 1px solid #F5F4F1;
+      gap: 0.35rem;
+    }
+    .route-stat:last-child { border-right: none; }
+    .route-stat-icon {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: #E8F1F8;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .route-stat-icon svg { width: 14px; height: 14px; color: #06477D; stroke: #06477D; }
+    .route-stat-value {
+      font-size: 1rem; font-weight: 800; color: #20252B; line-height: 1;
+    }
+    .route-stat-label {
+      font-size: 0.68rem; color: #9E9A91; font-weight: 600;
+    }
+
+    /* Action buttons */
+    .route-actions {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      padding: 0.85rem 1rem 1rem;
+      border-top: 1px solid #F5F4F1;
+    }
+    .btn-navigate {
+      display: flex; align-items: center; justify-content: center; gap: 0.45rem;
+      background: #06477D; color: #FFFFFF;
+      font-size: 0.9rem; font-weight: 700; font-family: inherit;
+      padding: 0.75rem 1rem; border-radius: 0.625rem; border: none;
+      cursor: pointer; text-decoration: none;
+      transition: background 150ms;
+      min-height: 48px;
+    }
+    .btn-navigate:hover { background: #054070; }
+    .btn-navigate svg { width: 16px; height: 16px; }
+
+    .btn-share {
+      display: flex; align-items: center; justify-content: center; gap: 0.45rem;
+      background: transparent; color: #20252B;
+      font-size: 0.9rem; font-weight: 600; font-family: inherit;
+      padding: 0.75rem 1rem; border-radius: 0.625rem;
+      border: 1.5px solid #E5E3DD; cursor: pointer;
+      transition: background 140ms;
+      min-height: 48px;
+    }
+    .btn-share:hover { background: #F8F7F3; }
+    .btn-share svg { width: 16px; height: 16px; }
+
+    /* ── Hospital list ── */
+    .section-label {
+      font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.09em; color: #9E9A91; padding: 0 0.25rem;
+    }
+
+    .hospital-list { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+
+    .hospital-item {
+      background: #FFFFFF;
+      border: 1px solid #E5E3DD;
+      border-radius: 0.75rem;
+      display: flex; align-items: center; gap: 0.85rem;
+      padding: 0.85rem 1rem;
+      cursor: pointer;
+      transition: background 130ms, border-color 130ms;
+    }
+    .hospital-item:hover  { background: #F8F7F3; }
+    .hospital-item.active { background: #E8F1F8; border-color: #06477D; }
+
+    .hospital-rank {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: #E8F1F8; color: #06477D;
+      font-size: 0.75rem; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .hospital-item.active .hospital-rank { background: #06477D; color: #FFFFFF; }
+
+    .hospital-info { flex: 1; min-width: 0; }
+    .hospital-name {
+      font-size: 0.88rem; font-weight: 700; color: #20252B;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .hospital-meta {
+      font-size: 0.73rem; color: #77766F; margin-top: 0.15rem;
+    }
+
+    .hospital-dir-btn {
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      background: #06477D; color: #FFFFFF;
+      font-size: 0.75rem; font-weight: 700; font-family: inherit;
+      padding: 0.4rem 0.75rem; border-radius: 0.45rem;
+      border: none; cursor: pointer; flex-shrink: 0;
+      text-decoration: none; transition: background 140ms;
+      min-height: 36px;
+    }
+    .hospital-dir-btn:hover { background: #054070; }
+    .hospital-dir-btn svg { width: 12px; height: 12px; }
+
+    .panel-placeholder {
+      display: flex; align-items: center; gap: 0.65rem;
+      padding: 1rem 0.25rem;
+      font-size: 0.88rem; color: #9E9A91;
+    }
+    .panel-placeholder svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+    /* Leaflet overrides */
+    .leaflet-top.leaflet-right { top: 0.6rem; right: 0.6rem; }
+    .leaflet-control-zoom a {
+      width: 36px !important; height: 36px !important;
+      line-height: 36px !important; font-size: 1.15rem !important;
+      border-radius: 0.5rem !important;
+    }
+
+    /* Responsive */
+    @media (max-width: 540px) {
+      #map { height: 45vh; }
+      .route-stat-value { font-size: 0.88rem; }
+    }
+
+    /* ── Page heading bar ── */
+    .page-heading-bar {
+      background: #FFFFFF;
+      border-bottom: 1px solid #E5E3DD;
+      flex-shrink: 0;
+    }
+    .page-heading-inner {
+      padding: 0.75rem 1.25rem;
+      display: flex; align-items: center; gap: 0.7rem;
+    }
+    .page-heading-icon {
+      width: 32px; height: 32px; border-radius: 0.5rem;
+      background: #E8F1F8;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .page-heading-icon svg { width: 15px; height: 15px; color: #06477D; stroke: #06477D; }
+    .page-heading-title { font-size: 1rem; font-weight: 800; color: #20252B; margin: 0; line-height: 1.2; }
+    .page-heading-sub   { font-size: 0.72rem; color: #77766F; margin: 0; }
+
+    /* ── Remove the old bespoke top-bar now nav is shared ── */
+    .top-bar { display: none; }
+  </style>
+</head>
+<body>
+<!-- Shared app nav (outside .page so it doesn't affect the flex map layout) -->
+<div id="app-nav"></div>
+
+<div class="page">
+
+  <!-- Page heading bar -->
+  <div class="page-heading-bar">
+    <div class="page-heading-inner">
+      <div class="page-heading-icon">
+        <i data-lucide="map-pin"></i>
       </div>
       <div>
-        <h1 class="text-2xl font-bold text-ink-900">Find Hospital</h1>
-        <p class="text-lg text-ink-600">Locating the nearest medical help.</p>
+        <h1 class="page-heading-title">Find Hospital</h1>
+        <p class="page-heading-sub">Locate the nearest hospital and get directions</p>
       </div>
     </div>
+  </div>
 
-    <div id="location-error" class="hidden bg-secondary-50 border border-secondary-200 rounded-xl p-6">
-      <p class="text-lg font-semibold text-secondary-600 mb-2">Location Required</p>
-      <p class="text-base text-secondary-600">Please allow location access so we can find the nearest hospital to you.</p>
-    </div>
+  <!-- Map -->
+  <div id="map" role="application" aria-label="Map showing your location and nearby hospitals"></div>
 
-    <div id="map-container" class="rounded-xl overflow-hidden border border-ink-200 shadow-sm relative h-80 w-full">
-      <div id="map" class="w-full h-full z-10"></div>
-    </div>
+  <!-- Scrollable bottom -->
+  <div class="bottom-scroll">
+    <div class="bottom-inner">
 
-    <div class="bg-white rounded-xl border border-ink-200 p-6 shadow-sm">
-      <div class="flex items-start gap-4 mb-5">
-        <div class="w-12 h-12 rounded-xl bg-primary-50 flex items-center justify-center shrink-0">
-          <i data-lucide="alert-circle" class="text-secondary-600 w-6 h-6"></i>
+      <!-- Location error -->
+      <div id="location-error" class="hidden" role="alert">
+        <i data-lucide="alert-circle"></i>
+        <span>Location access denied. Please allow location permissions and reload the page.</span>
+      </div>
+
+      <!-- Status -->
+      <div class="status-bar" aria-live="polite">
+        <span class="status-dot locating" id="status-dot"></span>
+        <span id="status-text">Detecting your location…</span>
+      </div>
+
+      <!-- Route info card (shown when a hospital is selected) -->
+      <div id="route-card" class="hidden" aria-live="polite">
+        <div class="route-header">
+          <span class="route-header-dot" aria-hidden="true"></span>
+          <span class="route-label">Route Information</span>
         </div>
-        <div>
-          <p class="text-sm font-semibold text-secondary-600 uppercase tracking-wide mb-1">Nearest Hospital</p>
-          <p id="nearest-hospital-name" class="text-xl font-bold text-ink-900">Locating...</p>
+        <p id="route-hospital-name">—</p>
+
+        <div class="route-stats" role="list">
+          <div class="route-stat" role="listitem">
+            <div class="route-stat-icon"><i data-lucide="map-pin"></i></div>
+            <span class="route-stat-value" id="route-distance">—</span>
+            <span class="route-stat-label">Distance</span>
+          </div>
+          <div class="route-stat" role="listitem">
+            <div class="route-stat-icon"><i data-lucide="clock"></i></div>
+            <span class="route-stat-value" id="route-time">—</span>
+            <span class="route-stat-label">Est. Time</span>
+          </div>
+          <div class="route-stat" role="listitem">
+            <div class="route-stat-icon"><i data-lucide="zap"></i></div>
+            <span class="route-stat-value">Driving</span>
+            <span class="route-stat-label">Fastest Route</span>
+          </div>
+        </div>
+
+        <div class="route-actions">
+          <a id="btn-navigate" href="#" target="_blank" rel="noopener"
+             class="btn-navigate" aria-label="Open route in Google Maps">
+            <i data-lucide="navigation"></i> Navigate
+          </a>
+          <button id="btn-share" class="btn-share" aria-label="Share your location">
+            <i data-lucide="share-2"></i> Share Location
+          </button>
         </div>
       </div>
-      <button id="emergency-btn" class="w-full flex items-center justify-center gap-3 bg-secondary-500 text-white font-bold py-6 px-6 rounded-xl text-lg hover:bg-secondary-600 transition-all">
-        <i data-lucide="navigation" class="w-6 h-6"></i> Get Directions
-      </button>
+
+      <!-- Hospital list -->
+      <p class="section-label" id="hospitals-label">Nearby Hospitals</p>
+      <ul class="hospital-list" id="hospital-list" aria-labelledby="hospitals-label">
+        <li class="panel-placeholder" id="panel-placeholder">
+          <i data-lucide="loader"></i>
+          <span>Searching for nearby hospitals…</span>
+        </li>
+      </ul>
+
     </div>
+  </div>
 
-  </main>
+</div>
 
-  <script type="module" src="./js/map.js"></script>
-  <script type="module">
-    import { requireAuth } from './js/supabaseClient.js';
-    await requireAuth();
-  </script>
-  <script>lucide.createIcons();</script>
+<script type="module" src="./js/map.js"></script>
+<script type="module" src="./js/nav.js"></script>
+<script type="module">
+  import { requireAuth } from './js/supabaseClient.js';
+  await requireAuth();
+</script>
+<script>lucide.createIcons();</script>
 </body>
 </html>

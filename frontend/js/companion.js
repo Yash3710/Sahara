@@ -95,7 +95,11 @@ async function sendMessage(text) {
       }),
     });
 
-    const reply = data.reply || 'I am sorry, I could not understand. Could you say that again?';
+    // sendSuccess wraps the payload as { success, message, data: { reply } }
+    const reply = data?.data?.reply || data?.reply;
+    if (!reply) {
+      throw new Error('The AI companion returned an empty response. Please try again.');
+    }
     addMessage('assistant', reply);
     chatHistory.push({ role: 'assistant', content: reply });
     lastFailedMessage = null;
@@ -104,11 +108,16 @@ async function sendMessage(text) {
     lastFailedMessage = text;
     // Remove the user message from history since it failed
     chatHistory.pop();
-    
-    if (err.message.includes('not available') || err.message.includes('unavailable')) {
-      showError('The AI companion is not available right now. Please try again later.');
+
+    const msg = err.message || '';
+    if (msg.includes('not available') || msg.includes('unavailable') || msg.includes('reach Ollama') || msg.includes('Cannot reach')) {
+      showError('The AI companion is not available right now. Please make sure Ollama is running and try again.');
+    } else if (msg.includes('timed out') || msg.includes('timeout') || msg.includes('did not respond')) {
+      showError('The AI companion took too long to respond. Please try again.');
+    } else if (msg.includes('empty response')) {
+      showError('The AI companion did not send a response. Please try again.');
     } else {
-      showError(err.message || 'Could not send your message. Please try again.');
+      showError(msg || 'Could not send your message. Please try again.');
     }
   } finally {
     chatInput.disabled = false;

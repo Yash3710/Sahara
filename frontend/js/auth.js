@@ -36,19 +36,26 @@ if (loginForm) {
 
     // Demo mode - skip Supabase auth
     if (email === 'demo@sahara.com' && password === 'demo123') {
-      localStorage.setItem('demo_session', JSON.stringify({ email, timestamp: Date.now() }));
+      localStorage.setItem('demo_session', JSON.stringify({
+        user: { id: 'demo-user', email: 'demo@sahara.com' },
+        timestamp: Date.now()
+      }));
       window.location.href = '/dashboard.html';
       return;
     }
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      console.log('[auth] attempting signInWithPassword for', email);
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
+      console.log('[auth] signInWithPassword result:', { data, error });
+
       if (error) {
-        let friendlyMessage = 'Something went wrong. Please try again.';
+        console.error('[auth] sign-in error:', error);
+        let friendlyMessage = error.message; // show raw message for debugging
         const errLower = error.message.toLowerCase();
         if (errLower.includes('invalid login credentials')) {
           friendlyMessage = 'The email or password you entered is incorrect. Please try again.';
@@ -57,14 +64,17 @@ if (loginForm) {
         }
         showError(friendlyMessage);
       } else {
+        console.log('[auth] sign-in success, session:', data?.session);
+        // Small delay to ensure Supabase writes the session to localStorage
+        await new Promise(r => setTimeout(r, 300));
+        console.log('[auth] redirecting to dashboard...');
         window.location.href = '/dashboard.html';
       }
     } catch (err) {
-      showError('Something went wrong. Please try again.');
+      console.error('[auth] caught exception:', err);
+      showError('Something went wrong: ' + err.message);
     } finally {
-      if (!errorMsg.classList.contains('hidden')) {
-        setLoading(false);
-      }
+      setLoading(false);
     }
   });
 }

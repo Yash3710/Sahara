@@ -115,17 +115,19 @@ async function loadTodayReminders() {
       return;
     }
 
-    container.innerHTML = items.map(item => `
-      <div class="flex items-center gap-4 py-3 ${items.indexOf(item) < items.length - 1 ? 'border-b border-gray-100' : ''}">
-        <div class="w-10 h-10 rounded-full bg-${item.color}-50 flex items-center justify-center shrink-0">
-          <i data-lucide="${item.icon}" class="text-${item.color}-600 w-5 h-5"></i>
-        </div>
-        <div>
-          <p class="text-base font-semibold text-gray-800">${item.title}</p>
-          <p class="text-sm text-gray-600">${item.subtitle}</p>
-        </div>
-      </div>
-    `).join('');
+    container.innerHTML = items.map((item, index) => {
+      const dotColor = item.color === 'blue' ? '#3B82F6' : item.color === 'amber' ? '#F59E0B' : '#06477D';
+      const hasDivider = index < items.length - 1;
+      return `
+        <div class="rem-row${hasDivider ? ' rem-row--divider' : ''}">
+          <span class="rem-row-time">${item.subtitle}</span>
+          <span class="rem-row-dot" style="background:${dotColor};"></span>
+          <span class="rem-row-title">${item.title}</span>
+          <span class="rem-row-status" aria-label="${item.icon === 'pill' ? 'Medicine' : 'Reminder'}">
+            <i data-lucide="${item.icon}" class="rem-row-icon"></i>
+          </span>
+        </div>`;
+    }).join('');
 
     if (window.lucide) lucide.createIcons();
   } catch (err) {

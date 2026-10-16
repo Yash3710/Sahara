@@ -3,159 +3,485 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard - Sahara</title>
+  <title>Dashboard – Sahara</title>
+  <link rel="stylesheet" href="./css/style.css">
   <script type="module" src="./js/main.js"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    /* ─────────────────────────────────────────
+       DASHBOARD LAYOUT — layout-only overrides.
+       Colors, fonts, branding: untouched.
+    ───────────────────────────────────────── */
+
+    /* Main column — matches reference's content width */
+    .dash-main {
+      width: 90%;
+      max-width: 960px;       /* tighter than before → matches reference */
+      margin: 0 auto;
+      padding: 1.75rem 0 5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;              /* uniform vertical rhythm between every card */
+    }
+
+    /* ── 1. Greeting ── */
+    .dash-greeting {
+      padding: 0.25rem 0 0.25rem;
+    }
+    .dash-date {
+      font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.09em; color: #77766F; margin-bottom: 0.3rem;
+    }
+    .dash-hello {
+      font-size: 1.65rem; font-weight: 800; color: #20252B;
+      line-height: 1.2; margin: 0 0 0.25rem;
+    }
+    .dash-sub { font-size: 0.88rem; color: #77766F; margin: 0; }
+
+    /* ── Card base ── */
+    .d-card {
+      background: #FFFFFF;
+      border: 1px solid #E5E3DD;
+      border-radius: 0.75rem;
+      padding: 1.25rem 1.5rem;
+    }
+
+    /* ── 2. Today's Summary ── */
+    .summary-card { padding: 1.1rem 1.5rem; }
+    .summary-label {
+      font-size: 0.66rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.1em; color: #9E9A91; margin: 0 0 0.75rem;
+    }
+    .summary-list {
+      display: flex; flex-direction: column; gap: 0;
+      list-style: none; margin: 0; padding: 0;
+    }
+    .summary-item {
+      display: flex; align-items: center; gap: 0.75rem;
+      font-size: 0.88rem; color: #20252B; font-weight: 500;
+      padding: 0.45rem 0;
+      border-bottom: 1px solid #F5F4F1;
+    }
+    .summary-item:last-child { border-bottom: none; }
+    .summary-icon {
+      width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: #E8F1F8;
+    }
+    .summary-icon svg { width: 13px; height: 13px; color: #06477D; stroke: #06477D; }
+
+    /* ── 3. Weather + Appointment — 3:2 columns ── */
+    .dash-top-grid {
+      display: grid;
+      grid-template-columns: 3fr 2fr;
+      gap: 1rem;
+      align-items: stretch;
+    }
+
+    /* Weather card */
+    .weather-card {
+      background: #06477D;
+      border-radius: 0.75rem;
+      padding: 1.4rem 1.6rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 1.25rem;
+      min-height: 155px;
+    }
+    .weather-top { display: flex; align-items: flex-start; gap: 0.9rem; }
+    .weather-top-icon { flex-shrink: 0; }
+    .weather-top-icon svg { width: 2.2rem; height: 2.2rem; color: #FDE047; stroke: #FDE047; }
+    .weather-temp {
+      font-size: 2rem; font-weight: 800; color: #FFFFFF; line-height: 1; margin-bottom: 0.2rem;
+    }
+    .weather-loc { font-size: 0.82rem; color: #BAD6F5; margin: 0; }
+    .weather-stats { display: flex; gap: 1.75rem; }
+    .weather-stat-label {
+      font-size: 0.62rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.07em; color: rgba(255,255,255,0.5);
+      display: flex; align-items: center; gap: 0.2rem; margin-bottom: 0.15rem;
+    }
+    .weather-stat-label svg { width: 10px; height: 10px; }
+    .weather-stat-value { font-size: 0.88rem; font-weight: 700; color: #FFFFFF; }
+
+    /* Appointment card */
+    .appt-card {
+      display: flex; flex-direction: column;
+      justify-content: space-between; gap: 0.75rem;
+      padding: 1.25rem 1.5rem;
+    }
+    .appt-label {
+      font-size: 0.66rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.1em; color: #9E9A91; margin: 0 0 0.6rem;
+    }
+    .appt-doctor-row {
+      display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.4rem;
+    }
+    .appt-doctor-icon {
+      width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+      background: #E8F1F8;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .appt-doctor-icon svg { width: 16px; height: 16px; color: #06477D; stroke: #06477D; }
+    .appt-doctor-name { font-size: 0.95rem; font-weight: 700; color: #20252B; margin: 0; }
+    .appt-doctor-time { font-size: 0.78rem; color: #77766F; margin: 0; }
+    .appt-specialty {
+      display: inline-block; font-size: 0.72rem; font-weight: 600;
+      background: #E8F1F8; color: #06477D;
+      padding: 0.15rem 0.55rem; border-radius: 9999px; margin-bottom: 0.6rem;
+    }
+    .appt-btn {
+      width: 100%; display: flex; align-items: center; justify-content: center;
+      gap: 0.4rem; border: 1.5px solid #E5E3DD; background: transparent;
+      color: #20252B; font-size: 0.82rem; font-weight: 600;
+      padding: 0.5rem 0.9rem; border-radius: 0.5rem; cursor: pointer;
+      transition: background 140ms; text-decoration: none;
+    }
+    .appt-btn:hover { background: #F8F7F3; }
+    .appt-btn svg { width: 13px; height: 13px; }
+
+    /* ── 4. Today's Reminders ── */
+    .reminders-card-header {
+      display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.75rem;
+    }
+    .reminders-card-icon {
+      width: 30px; height: 30px; border-radius: 0.375rem;
+      background: #E8F1F8;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .reminders-card-icon svg { width: 14px; height: 14px; color: #06477D; stroke: #06477D; }
+    .reminders-heading { font-size: 0.95rem; font-weight: 700; color: #20252B; margin: 0; }
+    .reminders-view-all {
+      display: inline-flex; align-items: center; gap: 0.25rem;
+      margin-top: 0.75rem; font-size: 0.8rem; font-weight: 600;
+      color: #06477D; text-decoration: none;
+    }
+    .reminders-view-all:hover { text-decoration: underline; }
+    .reminders-view-all svg { width: 12px; height: 12px; }
+
+    /* Reminder rows */
+    .rem-row {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.5rem 0;
+    }
+    .rem-row--divider { border-bottom: 1px solid #F5F4F1; }
+    .rem-row-time {
+      font-size: 0.75rem; font-weight: 600; color: #9E9A91;
+      min-width: 62px; flex-shrink: 0; white-space: nowrap;
+    }
+    .rem-row-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .rem-row-title {
+      flex: 1; font-size: 0.88rem; font-weight: 500; color: #20252B;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .rem-row-status { flex-shrink: 0; display: flex; align-items: center; }
+    .rem-row-icon { width: 14px; height: 14px; color: #C8C5BE; stroke: #C8C5BE; }
+
+    /* ── 5. AI Companion ── */
+    .companion-card {
+      display: flex; align-items: stretch; overflow: hidden;
+      padding: 0;                 /* icon-col handles its own padding */
+    }
+    .companion-icon-col {
+      width: 120px; flex-shrink: 0; background: #E8F1F8;
+      display: flex; align-items: center; justify-content: center;
+      padding: 1.75rem 1rem; border-right: 1px solid #E5E3DD;
+    }
+    .companion-avatar {
+      width: 56px; height: 56px; border-radius: 50%; background: #06477D;
+      display: flex; align-items: center; justify-content: center; position: relative;
+    }
+    .companion-avatar svg { width: 26px; height: 26px; color: #FFF; stroke: #FFF; }
+    .companion-dot {
+      position: absolute; bottom: 2px; right: 2px;
+      width: 13px; height: 13px; border-radius: 50%;
+      background: #22C55E; border: 2.5px solid #E8F1F8;
+    }
+    .companion-body { flex: 1; padding: 1.4rem 1.6rem; }
+    .companion-eyebrow {
+      font-size: 0.66rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.1em; color: #06477D; margin-bottom: 0.35rem;
+    }
+    .companion-heading {
+      font-size: 1.1rem; font-weight: 800; color: #20252B; margin-bottom: 0.3rem;
+    }
+    .companion-desc {
+      font-size: 0.85rem; color: #77766F; line-height: 1.55; margin-bottom: 1rem;
+    }
+    .companion-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+    .companion-btn-primary {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      background: #06477D; color: #FFF;
+      font-size: 0.85rem; font-weight: 700;
+      padding: 0.5rem 1.1rem; border-radius: 0.5rem;
+      text-decoration: none; border: none; cursor: pointer;
+      transition: background 150ms; font-family: inherit;
+    }
+    .companion-btn-primary:hover { background: #054070; }
+    .companion-btn-primary svg { width: 14px; height: 14px; }
+    .companion-btn-secondary {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      background: transparent; color: #20252B;
+      font-size: 0.85rem; font-weight: 600;
+      padding: 0.5rem 1.1rem; border-radius: 0.5rem;
+      text-decoration: none; border: 1.5px solid #E5E3DD; cursor: pointer;
+      transition: background 150ms, border-color 150ms; font-family: inherit;
+    }
+    .companion-btn-secondary:hover { background: #F8F7F3; border-color: #C8C5BE; }
+    .companion-btn-secondary svg { width: 14px; height: 14px; }
+
+    /* ── 6. Thought for the Day ── */
+    .thought-card {
+      display: flex; align-items: flex-start; gap: 0.9rem;
+      padding: 1.1rem 1.5rem;
+    }
+    .thought-quote-icon {
+      font-size: 2.25rem; line-height: 1; color: #E5E3DD;
+      font-family: Georgia, serif; flex-shrink: 0;
+      margin-top: -0.15rem; user-select: none;
+    }
+    .thought-body { flex: 1; }
+    .thought-label-row {
+      display: flex; align-items: center; gap: 0.35rem;
+      font-size: 0.66rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.1em; color: #9E9A91; margin-bottom: 0.5rem;
+    }
+    .thought-label-row svg { width: 12px; height: 12px; color: #9E9A91; stroke: #9E9A91; }
+    #positivity-message {
+      font-size: 0.92rem; color: #20252B; line-height: 1.6;
+      font-style: italic; margin: 0 0 0.3rem;
+    }
+    .thought-attribution { font-size: 0.75rem; color: #9E9A91; margin: 0; }
+
+    /* Hidden mood section — kept for JS */
+    #mood-section { display: none; }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .dash-top-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .dash-main            { width: 94%; padding-top: 1.25rem; }
+      .companion-icon-col   { display: none; }
+      .companion-card       { border-radius: 0.75rem; }
+      .weather-stats        { gap: 1rem; }
+    }
+  </style>
 </head>
-<body class="bg-cream text-ink-900 font-sans min-h-screen">
-  
-  <nav class="bg-white border-b border-ink-200 px-6 py-4 flex justify-between items-center">
-    <a href="/dashboard.html" class="flex items-center gap-2">
-      <img src="/logo.png" alt="Sahara" class="h-8">
-    </a>
-    <div class="flex items-center gap-4">
-      <span id="user-email" class="text-base font-medium text-ink-600 hidden sm:inline">Loading...</span>
-      <button id="logout-btn" class="text-base text-secondary-600 font-semibold hover:text-secondary-600 px-4 py-2 rounded-xl hover:bg-secondary-50 transition-all">Logout</button>
-    </div>
-  </nav>
+<body style="background:var(--color-bg); min-height:100vh;">
 
-  <div class="max-w-3xl mx-auto p-6 space-y-6 pb-32">
-    
-    <a href="/sos.html" class="fixed bottom-6 right-6 z-40">
-      <button aria-label="Emergency SOS" class="flex items-center gap-2 bg-secondary-500 text-white text-lg font-bold px-6 py-4 rounded-xl shadow-card hover:bg-secondary-600 active:scale-95 transition-all">
-        <i data-lucide="shield-alert" class="w-6 h-6"></i>
-        EMERGENCY SOS
-      </button>
-    </a>
+  <!-- Navbar (injected by nav.js) -->
+  <div id="app-nav"></div>
 
-    <div class="pt-2 pb-1">
-      <p class="text-sm font-semibold text-primary-700 tracking-wide uppercase mb-1.5" id="date-display">Today</p>
-      <h1 class="text-3xl font-bold text-ink-900 leading-tight">
+  <!-- SOS floating button -->
+  <a href="/sos.html" class="sos-fab" aria-label="Emergency SOS">
+    <i data-lucide="shield-alert" style="width:20px;height:20px;"></i>
+    EMERGENCY SOS
+  </a>
+
+  <main class="dash-main">
+
+    <!-- ── 1. Greeting ── -->
+    <div class="dash-greeting">
+      <p class="dash-date" id="date-display">Today</p>
+      <h1 class="dash-hello">
         <span id="greeting-text">Good morning</span> 👋
       </h1>
-      <p class="text-lg text-ink-600 mt-1.5">Here is a quick look at your day.</p>
+      <p class="dash-sub">Here's your plan for today.</p>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      
+    <!-- ── 2. Today's Summary (full-width) ── -->
+    <div class="d-card summary-card">
+      <p class="summary-label">Today's Summary</p>
+      <ul class="summary-list" id="summary-list">
+        <li class="summary-item">
+          <span class="summary-icon"><i data-lucide="pill"></i></span>
+          <span id="summary-medicines">Loading medicines…</span>
+        </li>
+        <li class="summary-item">
+          <span class="summary-icon"><i data-lucide="stethoscope"></i></span>
+          <span id="summary-appointment">Loading appointment…</span>
+        </li>
+        <li class="summary-item">
+          <span class="summary-icon"><i data-lucide="bell"></i></span>
+          <span id="summary-reminders">Loading reminders…</span>
+        </li>
+        <li class="summary-item">
+          <span class="summary-icon"><i data-lucide="cloud"></i></span>
+          <span>Weather updates coming soon</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- ── 3. Weather + Upcoming Appointment ── -->
+    <div class="dash-top-grid">
+
       <!-- Weather -->
-      <div class="rounded-xl bg-primary-700 px-6 py-6 flex flex-col justify-between gap-4 relative overflow-hidden">
-        <div class="flex items-center gap-4">
-          <i data-lucide="sun" class="text-primary-300 w-12 h-12 shrink-0"></i>
+      <div class="weather-card">
+        <div class="weather-top">
+          <div class="weather-top-icon"><i data-lucide="sun"></i></div>
           <div>
-            <p class="text-2xl font-bold text-white leading-none">Weather</p>
-            <p class="text-primary-200 text-base mt-1">Live updates</p>
+            <p class="weather-temp">--°C</p>
+            <p class="weather-loc">Weather — Coming Soon</p>
           </div>
         </div>
-        <div class="bg-white/10 rounded-xl px-4 py-3 flex items-center gap-2">
-          <i data-lucide="clock" class="w-5 h-5 text-yellow-300"></i>
-          <span class="text-white font-semibold text-base">Coming Soon!</span>
+        <div class="weather-stats">
+          <div>
+            <p class="weather-stat-label">
+              <i data-lucide="wind"></i> Wind
+            </p>
+            <p class="weather-stat-value">-- km/h</p>
+          </div>
+          <div>
+            <p class="weather-stat-label">
+              <i data-lucide="droplets"></i> Rain
+            </p>
+            <p class="weather-stat-value">--%</p>
+          </div>
+          <div>
+            <p class="weather-stat-label">
+              <i data-lucide="thermometer"></i> Feels
+            </p>
+            <p class="weather-stat-value">--°C</p>
+          </div>
         </div>
       </div>
 
-      <div class="bg-white rounded-xl border border-ink-200 p-6 flex flex-col justify-between" id="appointment-card">
+      <!-- Upcoming Appointment -->
+      <div class="d-card appt-card" id="appointment-card">
         <div>
-          <p class="text-sm font-semibold text-ink-400 uppercase tracking-wide mb-3">Next Appointment</p>
+          <p class="appt-label">Upcoming Appointment</p>
           <div id="appointment-content">
-            <div class="skeleton h-6 w-3/4 mb-2"></div>
-            <div class="skeleton h-4 w-1/2"></div>
+            <div class="skeleton h-8 w-3/4 mb-2" style="border-radius:0.5rem;"></div>
+            <div class="skeleton h-4 w-1/2 mb-3" style="border-radius:0.5rem;"></div>
+            <div class="skeleton h-5 w-1/3" style="border-radius:9999px;"></div>
           </div>
         </div>
-        <a href="/reminders.html" class="mt-5 block">
-          <button class="w-full flex items-center justify-center gap-2 border-2 border-ink-200 text-ink-600 text-base font-semibold py-3 rounded-xl hover:bg-cream transition-all">
-            View All Reminders <i data-lucide="arrow-right" class="w-5 h-5"></i>
-          </button>
+        <a href="/reminders.html" class="appt-btn">
+          View Details
+          <i data-lucide="arrow-right"></i>
         </a>
       </div>
+
     </div>
 
-    <div class="bg-white rounded-xl border border-ink-200 overflow-hidden">
-      <div class="flex flex-col md:flex-row">
-        <div class="w-full md:w-48 bg-primary-50 flex items-center justify-center py-8 md:py-0 shrink-0 border-b md:border-b-0 md:border-r border-ink-200">
-          <div class="relative">
-            <div class="w-16 h-16 rounded-full bg-primary-600 flex items-center justify-center">
-              <i data-lucide="message-circle" class="text-white w-7 h-7"></i>
-            </div>
-            <span class="absolute bottom-0 right-0 w-4 h-4 rounded-full bg-primary-400 border-2 border-white"></span>
-          </div>
+    <!-- ── 4. Today's Reminders (full-width) ── -->
+    <div class="d-card">
+      <div class="reminders-card-header">
+        <div class="reminders-card-icon"><i data-lucide="calendar"></i></div>
+        <h2 class="reminders-heading">Today's Reminders</h2>
+      </div>
+      <div id="reminders-list">
+        <div class="skeleton h-5 w-full mb-3" style="border-radius:0.375rem;"></div>
+        <div class="skeleton h-5 w-5/6 mb-3" style="border-radius:0.375rem;"></div>
+        <div class="skeleton h-5 w-4/6"      style="border-radius:0.375rem;"></div>
+      </div>
+      <a href="/reminders.html" class="reminders-view-all">
+        View all reminders <i data-lucide="arrow-right"></i>
+      </a>
+    </div>
+
+    <!-- ── 5. AI Companion (full-width) ── -->
+    <div class="d-card companion-card">
+      <div class="companion-icon-col">
+        <div class="companion-avatar">
+          <i data-lucide="message-circle"></i>
+          <span class="companion-dot"></span>
         </div>
-        <div class="flex-1 p-6 md:p-7">
-          <p class="text-sm font-semibold text-primary-700 uppercase tracking-wide mb-1">AI Companion</p>
-          <h2 class="text-xl font-bold text-ink-900 mb-2">I am here and ready to talk.</h2>
-          <p class="text-base text-ink-600 mb-5 leading-relaxed">Tell me how you are feeling, ask a question, or simply have a friendly chat.</p>
-          <a href="/companion.html">
-            <button class="flex items-center gap-2 bg-primary-600 text-white text-base font-semibold px-6 py-3 rounded-xl hover:bg-primary-700 transition-all">
-              <i data-lucide="message-circle" class="w-5 h-5"></i> Start Chatting
-            </button>
+      </div>
+      <div class="companion-body">
+        <p class="companion-eyebrow">AI Companion</p>
+        <h2 class="companion-heading">Meet Your AI Companion</h2>
+        <p class="companion-desc">
+          I'm here to help you every day — reminders, conversations, or just a friendly check-in.
+        </p>
+        <div class="companion-actions">
+          <a href="/companion.html" class="companion-btn-primary">
+            <i data-lucide="mic"></i> Talk
+          </a>
+          <a href="/companion.html" class="companion-btn-secondary">
+            <i data-lucide="message-square"></i> Chat
           </a>
         </div>
       </div>
     </div>
 
-    <div class="bg-white rounded-xl border border-ink-200 p-6">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-xl font-bold text-ink-900">Today's Reminders</h2>
-        <a href="/reminders.html" class="text-primary-700 font-semibold text-base hover:underline">View All</a>
-      </div>
-      <div id="reminders-list">
-        <div class="skeleton h-16 w-full mb-3"></div>
-        <div class="skeleton h-16 w-full"></div>
+    <!-- ── 6. Thought for the Day (full-width) ── -->
+    <div class="d-card thought-card">
+      <span class="thought-quote-icon" aria-hidden="true">"</span>
+      <div class="thought-body">
+        <div class="thought-label-row">
+          <i data-lucide="sparkles"></i>
+          Thought for the Day
+        </div>
+        <p id="positivity-message">Loading…</p>
+        <p class="thought-attribution">— A little positivity</p>
       </div>
     </div>
 
-    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
-      <a href="/reminders.html" class="bg-white rounded-xl border border-ink-200 p-6 flex flex-col items-center gap-3 hover:shadow-lift transition-all text-center">
-        <div class="w-14 h-14 rounded-full bg-primary-50 flex items-center justify-center">
-          <i data-lucide="pill" class="text-primary-600 w-7 h-7"></i>
-        </div>
-        <span class="text-base font-semibold text-ink-900">My Reminders</span>
-      </a>
-      <a href="/companion.html" class="bg-white rounded-xl border border-ink-200 p-6 flex flex-col items-center gap-3 hover:shadow-lift transition-all text-center">
-        <div class="w-14 h-14 rounded-full bg-primary-50 flex items-center justify-center">
-          <i data-lucide="message-circle" class="text-primary-600 w-7 h-7"></i>
-        </div>
-        <span class="text-base font-semibold text-ink-900">AI Companion</span>
-      </a>
-      <a href="/sos.html" class="bg-white rounded-xl border border-ink-200 p-6 flex flex-col items-center gap-3 hover:shadow-lift transition-all text-center">
-        <div class="w-14 h-14 rounded-full bg-primary-50 flex items-center justify-center">
-          <i data-lucide="shield-alert" class="text-secondary-600 w-7 h-7"></i>
-        </div>
-        <span class="text-base font-semibold text-ink-900">Emergency SOS</span>
-      </a>
-      <a href="/navigation.html" class="bg-white rounded-xl border border-ink-200 p-6 flex flex-col items-center gap-3 hover:shadow-lift transition-all text-center">
-        <div class="w-14 h-14 rounded-full bg-primary-50 flex items-center justify-center">
-          <i data-lucide="map-pin" class="text-primary-600 w-7 h-7"></i>
-        </div>
-        <span class="text-base font-semibold text-ink-900">Find Hospital</span>
-      </a>
-      <a href="/vault.html" class="bg-white rounded-xl border border-ink-200 p-6 flex flex-col items-center gap-3 hover:shadow-lift transition-all text-center">
-        <div class="w-14 h-14 rounded-full bg-primary-50 flex items-center justify-center">
-          <i data-lucide="folder" class="text-primary-600 w-7 h-7"></i>
-        </div>
-        <span class="text-base font-semibold text-ink-900">My Documents</span>
-      </a>
-      <a href="/profile.html" class="bg-white rounded-xl border border-ink-200 p-6 flex flex-col items-center gap-3 hover:shadow-lift transition-all text-center">
-        <div class="w-14 h-14 rounded-full bg-primary-50 flex items-center justify-center">
-          <i data-lucide="user" class="text-primary-600 w-7 h-7"></i>
-        </div>
-        <span class="text-base font-semibold text-ink-900">My Profile</span>
-      </a>
-    </div>
+    <!-- Mood section (kept for JS, hidden in layout per reference) -->
+    <div id="mood-section" style="display:none;"></div>
 
-  </div>
+  </main>
 
+  <script type="module" src="./js/nav.js"></script>
   <script type="module" src="./js/dashboard.js"></script>
-  <script>
-    lucide.createIcons();
-    // Dynamic Date & Greeting
-    const dateOpts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    document.getElementById('date-display').innerText = new Date().toLocaleDateString('en-IN', dateOpts);
-    
+  <script type="module" src="./js/dashboardExtras.js"></script>
+  <script type="module">
+    import { supabase } from './js/supabaseClient.js';
+
+    // Date + greeting
+    const dateOpts = { weekday: 'long', day: 'numeric', month: 'long' };
+    document.getElementById('date-display').innerText =
+      new Date().toLocaleDateString('en-IN', dateOpts).toUpperCase();
     const hour = new Date().getHours();
-    let greeting = 'Good evening';
-    if (hour < 12) greeting = 'Good morning';
-    else if (hour < 18) greeting = 'Good afternoon';
-    document.getElementById('greeting-text').innerText = greeting;
+    document.getElementById('greeting-text').innerText =
+      hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+
+    // Summary card — populate from session data
+    async function loadSummary() {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      const uid = session.user.id;
+
+      const startOfDay = new Date(); startOfDay.setHours(0,0,0,0);
+      const endOfDay   = new Date(); endOfDay.setHours(23,59,59,999);
+
+      // Medicines count
+      const { data: meds } = await supabase
+        .from('medicines').select('id').eq('user_id', uid).eq('is_active', true);
+      const medCount = meds?.length ?? 0;
+      document.getElementById('summary-medicines').textContent =
+        medCount ? `${medCount} Medicine Reminder${medCount > 1 ? 's' : ''}` : 'No medicine reminders today';
+
+      // Next appointment
+      const { data: appts } = await supabase
+        .from('appointments').select('doctor_name, appointment_at')
+        .eq('user_id', uid).eq('is_completed', false)
+        .gte('appointment_at', startOfDay.toISOString())
+        .order('appointment_at', { ascending: true }).limit(1);
+      if (appts?.length) {
+        const a = appts[0];
+        const t = new Date(a.appointment_at).toLocaleTimeString('en-IN', { hour: 'numeric', minute:'2-digit', hour12: true });
+        document.getElementById('summary-appointment').textContent = `${a.doctor_name} at ${t}`;
+      } else {
+        document.getElementById('summary-appointment').textContent = 'No appointments today';
+      }
+
+      // Reminders count
+      const { data: rems } = await supabase
+        .from('reminders').select('id').eq('user_id', uid)
+        .gte('remind_at', startOfDay.toISOString())
+        .lte('remind_at', endOfDay.toISOString());
+      const remCount = rems?.length ?? 0;
+      document.getElementById('summary-reminders').textContent =
+        remCount ? `${remCount} Reminder${remCount > 1 ? 's' : ''} scheduled` : 'No reminders today';
+    }
+
+    loadSummary().catch(() => {});
+    lucide.createIcons();
   </script>
+
 </body>
 </html>

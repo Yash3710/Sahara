@@ -41,6 +41,10 @@ export default {
           900: "#1A1A1A",
         },
         cream: "#F7F6F3",
+        canvas: "#F8F7F3",
+        navy: "#06477D",
+        "soft-blue": "#E8F1F8",
+        border: "#E5E3DD",
       },
       fontFamily: {
         sans: ["Inter", "system-ui", "-apple-system", "sans-serif"],
